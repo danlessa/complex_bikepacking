@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from tqdm.auto import tqdm
 
 # Parameters
-route_path = '../data/route.gpx'
+route_path = '../data/rodotreta.gpx'
 TOTAL_WEIGHT = 70
 CRR = 0.007
 CDA = 0.32
@@ -74,7 +74,8 @@ def calculate_speeds(df):
     output = {}
     for strategy, params in tqdm(STRATEGIES.items()):
         grads = df.where(lambda df: params['filter'](df.grad)).grad.dropna()
-        speeds = grads.apply(lambda grad: speed(params['power'], grad / 100) * 3.6)
+        speeds = grads.apply(lambda grad: speed(
+            params['power'], grad / 100) * 3.6)
         output[strategy] = speeds
         df.loc[grads.index, 'speed'] = speeds
     # Summary
@@ -99,15 +100,16 @@ def calculate_deltas(df):
     return deltas
 
 
-def load_route():
-    with open(route_path, 'r') as fid:
-        gpx = gpxpy.parse(fid.read())
+def load_route(content=False):
+    if content is False:
+        with open(route_path, 'r') as fid:
+            content = fid.read()
+    gpx = gpxpy.parse(content)
 
     route_points = gpx.tracks[0].segments[0].points
     df = (pd.DataFrame([(p.longitude, p.latitude, p.elevation) for p in route_points],
                        columns=['lon', 'lat', 'ele'])
           .drop_duplicates(subset=['lat', 'lon'])
-          .head(5000)
           )
     deltas = calculate_deltas(df)
     df = df.join(pd.Series(deltas, name='delta'))
@@ -121,5 +123,3 @@ def load_route():
     df = df.assign(days=df.total_duration // 8)
     df = df.assign(hours=df.total_duration // 1)
     return df
-
-
