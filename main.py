@@ -29,10 +29,12 @@ def get_wind_metrics(ds, lat, lon, hour):
 def map_fig(df):
     fig = px.scatter_mapbox(lat=df.lat,
                             lon=df.lon,
-                            title='Speed (km/h)',
                             color=df.speed.map(lambda x: x if x < 45 else 45).map(
                                 lambda x: x if x > 10 else 10),
-                            labels={'color': 'Estimated speed (km/h)'}
+                            hover_data=[df.days, df.total_duration],
+                            labels={'color': 'Estimated speed (km/h)',
+                                    'hover_data_0': 'Estimated day',
+                                    'hover_data_1': 'Estimated total duration (h)'}
                             )
     fig.update_layout(mapbox_style="stamen-terrain",
                       margin={"r": 0, "t": 0, "l": 0, "b": 0})
@@ -51,7 +53,6 @@ def wind_speed_fig(agg_ds, lat, lon):
 
     fig = px.box(x=hourly_df.hour.map(lambda x: f"{x :02.0f}:00"),
                  y=hourly_df.wind_speed,
-                 title='Hourly wind speed',
                  labels={'x': 'TOD',
                          'y': 'Intensity (km/h)'})
     return fig
@@ -63,13 +64,12 @@ def wind_radar_fig(agg_ds, lat, lon, hour):
                       columns=['speed', 'angle'])
     df = df.groupby(15 * (df.angle // 15)).speed.count().reset_index()
     df['speed'] /= len(df)
-    fig = px.bar_polar(df, r="speed", theta="angle", title='Wind direction')
+    fig = px.bar_polar(df, r="speed", theta="angle")
     return fig
 
 
 df = load_route()
 agg_ds = xr.open_dataset('data/agg_ds.nc')
-CSS_LINKS = ['https://codepen.io/danilolessa/pen/JjGxwmX.css']
 CSS_LINKS = []
 app = dash.Dash(__name__, external_stylesheets=CSS_LINKS)
 app.title = 'Wind statistics for GPX tracks'
@@ -101,17 +101,22 @@ app.layout = html.Div([
         }
     )]),
 
-    html.Div([html.P('Click on any route point to see the local wind statistics.')]),
-
+    html.Div([html.H2('Route summary'),
+              html.P('Click on any point to see the local wind statistics. Hover for elapsed time information.')]),
 
     html.Div([dcc.Graph(id='graph_map',
                         figure=map_fig(df))]),
 
+    html.Div([html.H2('Wind intensity and direction at the selected point')]),
+
     html.Div([dcc.Graph(id='hourly_dist',
+                        style={'flex': "70%"},
                         figure=wind_speed_fig(agg_ds, default_lat, default_lon)),
               dcc.Graph(id='wind_direction',
+                        style={'flex': "30%"},
                         figure=wind_radar_fig(agg_ds, default_lat, default_lon, default_hour))],
-             id='wind_row')
+             id='wind_row',
+             style={'display': 'flex'})
 ])
 
 

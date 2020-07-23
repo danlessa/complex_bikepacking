@@ -10,7 +10,7 @@ import plotly.graph_objects as go
 from tqdm.auto import tqdm
 
 # Parameters
-route_path = 'data/rodotreta.gpx'
+route_path = 'data/meteoro.gpx'
 TOTAL_WEIGHT = 70
 CRR = 0.007
 CDA = 0.32
