@@ -9,4 +9,6 @@ This is an repository for notebooks and scripts for planning an record-breaking 
 
 ## Instructions
 
-- Download
+- Download the grid for wind speed intensity and directions through download_data.py
+- Create the 'agg_ds.nc' summary dataset through scripts/grib.py
+- Just run the main.py file
