@@ -3,13 +3,12 @@ import cdsapi
 c = cdsapi.Client()
 
 c.retrieve(
-    'reanalysis-era5-pressure-levels',
+    'reanalysis-era5-land',
     {
-        'product_type': 'reanalysis',
         'format': 'grib',
         'variable': [
-            'relative_humidity', 'temperature', 'u_component_of_wind',
-            'v_component_of_wind',
+            '10m_u_component_of_wind', '10m_v_component_of_wind', 'skin_temperature',
+            'total_precipitation',
         ],
         'year': [
             '2017', '2018', '2019',
@@ -22,13 +21,14 @@ c.retrieve(
             '19', '25',
         ],
         'time': [
-            '00:00', '03:00', '06:00',
-            '09:00', '12:00', '15:00',
-            '18:00', '21:00',
+            '00:00', '02:00', '04:00',
+            '06:00', '08:00', '10:00',
+            '12:00', '14:00', '16:00',
+            '18:00', '20:00', '22:00',
         ],
         'area': [
-            5.5, -70, -48,
-            -34,
+            5.5, -70, -34,
+            -48,
         ],
     },
     'download.grib')

@@ -1,0 +1,12 @@
+div #wind_row {
+  display: flex;
+}
+
+
+div #hourly_dist {
+  flex: 70%;
+}
+
+div #wind_direction {
+  flex: 30%;
+}
