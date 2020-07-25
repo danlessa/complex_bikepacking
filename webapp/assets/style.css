@@ -1,0 +1,22 @@
+div #wind_row {
+  display: flex;
+}
+
+
+div #hourly_dist {
+  flex: 70%;
+}
+
+div #wind_direction {
+  flex: 30%;
+}
+
+h2 {
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+}
+
+p {
+  text-align: center;
+  font-family: 'Courier New', Courier, monospace;
+}
