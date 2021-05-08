@@ -69,9 +69,9 @@ def p_power_output(params, _2, _3, state):
     elif gradient > 0.5:
         output = 140
     elif gradient > -0.5:
-        output = 90
+        output = 80
     elif gradient < -2.0:
-        output = 30
+        output = 20
     elif gradient < -4.0:
         output = 0
     else:
