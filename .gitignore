@@ -1,1 +1,3 @@
 *.grib
+.ipynb_checkpoints
+.vscode
