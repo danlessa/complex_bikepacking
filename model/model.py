@@ -121,10 +121,13 @@ def s_incline(params, _2, history, state, _5):
         current_x = state['position']
         dx = current_x - past_x
 
-        past_elevation = interpolator(current_x - dx)
-        current_elevation = interpolator(current_x)
-        dy = current_elevation - past_elevation
-        value = atan2(dy, dx)
+        try: 
+            past_elevation = interpolator(current_x - dx)
+            current_elevation = interpolator(current_x)
+            dy = current_elevation - past_elevation
+            value = atan2(dy, dx)
+        except:
+            value = 0
     else:
         scale = 2
         random_value = (random() - 0.5) * scale # between -1 and +1

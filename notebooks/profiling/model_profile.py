@@ -11,7 +11,7 @@ from cadCAD_tools import easy_run
 from scipy.interpolate import interp1d
 
 from model.functions import load_route, append_deltas
-df = (load_route('../../data/uiramuta_chui.gpx').head(5000)
+df = (load_route('../../data/uiramuta_chui.gpx').head(100)
       .pipe(append_deltas)
       .assign(total_distance=lambda df: df.delta.cumsum())
       )
@@ -26,12 +26,12 @@ from model import initial_state, params, timestep_block
 params.update(elevation_interpolator=[elevation_interpolator],
               latitude_interpolator=[latitude_interpolator],
               longitude_interpolator=[longitude_interpolator],
-              dt=[0.5])
+              dt=[0.3])
 
 results = easy_run(initial_state,
                    params,
                    timestep_block,
-                   50000,
+                   5_000_000,
                    1,
                    assign_params=False)
 

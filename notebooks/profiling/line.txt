@@ -1,0 +1,316 @@
+
+                  ___________    ____
+  ________ __ ___/ / ____/   |  / __ \
+ / ___/ __` / __  / /   / /| | / / / /
+/ /__/ /_/ / /_/ / /___/ ___ |/ /_/ /
+\___/\__,_/\__,_/\____/_/  |_/_____/
+by cadCAD
+
+Execution Mode: local_proc
+Configuration Count: 1
+Dimensions of the first simulation: (Timesteps, Params, Runs, Vars) = (10000, 8, 1, 6)
+Execution Method: local_simulations
+SimIDs   : [0]
+SubsetIDs: [0]
+Ns       : [0]
+ExpIDs   : [0]
+Execution Mode: single_threaded
+Wrote profile results to model_profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 2.32076 s
+File: /home/danlessa/repos/danlessa/cadCAD-tweaked/cadCAD/engine/simulation.py
+Function: get_policy_input at line 63
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    63                                               @profile
+    64                                               def get_policy_input(
+    65                                                   self,
+    66                                                   sweep_dict: Dict[str, List[Any]],
+    67                                                   sub_step: int,
+    68                                                   sL: List[Dict[str, Any]],
+    69                                                   s: Dict[str, Any],
+    70                                                   funcs: List[Callable],
+    71                                                   additional_objs
+    72                                               ) -> Dict[str, Any]:
+    73                                                   """
+    74                                                   Retrieves the Policy Input for usage on State Update Functions
+    75                                           
+    76                                                   Arguments:
+    77                                                       sweep_dict - System Parameters
+    78                                                       sub_step - Execution order in regards to PSUBs
+    79                                                       sL - History of the variables state
+    80                                                       s - Current variables state
+    81                                                       funcs - List of cadCAD Policies to be executed
+    82                                                   """
+    83                                           
+    84     21074      49698.0      2.4      2.1          ops = self.policy_ops
+    85                                           
+    86                                                   # Execute and retrieve policies results
+    87                                           
+    88     21074      43769.0      2.1      1.9          args = (sweep_dict, sub_step, sL, s)
+    89     21074      58028.0      2.8      2.5          def execute_policy(f: PolicyFunction) -> dict:
+    90                                                       return policy_scope_tuner(args, additional_objs, f)
+    91                                           
+    92     21074      48715.0      2.3      2.1          col_results = map(execute_policy, funcs)
+    93                                           
+    94                                           
+    95                                                   # Create a nested dict containing all results combinations
+    96                                                   # Where 'k' is a policy input label,
+    97                                                   # and 'd' is a ordinal for aggregation
+    98     21074      37235.0      1.8      1.6          new_dict: dict = {}
+    99    105370     749159.0      7.1     32.3          for i, col_result in enumerate(col_results):
+   100    168592     360889.0      2.1     15.6              for label, value in col_result.items():
+   101     84296     178869.0      2.1      7.7                  if label not in new_dict.keys():
+   102     21074      43566.0      2.1      1.9                      new_dict[label] = {}
+   103                                                           else:
+   104                                                               pass
+   105     84296     165020.0      2.0      7.1                  new_dict[label][i] = value
+   106                                           
+   107                                                   # Aggregator functions
+   108     21074      55931.0      2.7      2.4          ops_head, *ops_tail = ops
+   109                                           
+   110                                                   # Function for aggregating a combination of policy inputs
+   111                                                   # for the same signal
+   112     21074      44412.0      2.1      1.9          def f(val_list):
+   113                                                       return compose(init_reduction_funct=ops_head,
+   114                                                                      funct_list=ops_tail,
+   115                                                                      val_list=val_list)
+   116                                           
+   117                                                   # Generate dict to be consumed by SUFs
+   118     42148     406675.0      9.6     17.5          policy_input = {
+   119                                                       label: f(val_list)
+   120                                                       for label, val_list
+   121     21074      41871.0      2.0      1.8              in new_dict.items()}
+   122                                           
+   123     21074      36919.0      1.8      1.6          return policy_input
+
+
+                  ___________    ____
+  ________ __ ___/ / ____/   |  / __ \
+ / ___/ __` / __  / /   / /| | / / / /
+/ /__/ /_/ / /_/ / /___/ ___ |/ /_/ /
+\___/\__,_/\__,_/\____/_/  |_/_____/
+by cadCAD
+
+Execution Mode: local_proc
+Configuration Count: 1
+Dimensions of the first simulation: (Timesteps, Params, Runs, Vars) = (10000, 8, 1, 6)
+Execution Method: local_simulations
+SimIDs   : [0]
+SubsetIDs: [0]
+Ns       : [0]
+ExpIDs   : [0]
+Execution Mode: single_threaded
+Total execution time: 11.16s
+Wrote profile results to model_profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 4.63216 s
+File: /home/danlessa/repos/danlessa/cadCAD-tweaked/cadCAD/engine/simulation.py
+Function: get_policy_input at line 63
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+    63                                               @profile
+    64                                               def get_policy_input(
+    65                                                   self,
+    66                                                   sweep_dict: Dict[str, List[Any]],
+    67                                                   sub_step: int,
+    68                                                   sL: List[Dict[str, Any]],
+    69                                                   s: Dict[str, Any],
+    70                                                   funcs: List[Callable],
+    71                                                   additional_objs
+    72                                               ) -> Dict[str, Any]:
+    73                                                   """
+    74                                                   Retrieves the Policy Input for usage on State Update Functions
+    75                                           
+    76                                                   Arguments:
+    77                                                       sweep_dict - System Parameters
+    78                                                       sub_step - Execution order in regards to PSUBs
+    79                                                       sL - History of the variables state
+    80                                                       s - Current variables state
+    81                                                       funcs - List of cadCAD Policies to be executed
+    82                                                   """
+    83                                           
+    84     40000      98736.0      2.5      2.1          ops = self.policy_ops
+    85                                           
+    86                                                   # Execute and retrieve policies results
+    87                                           
+    88     40000      85695.0      2.1      1.9          args = (sweep_dict, sub_step, sL, s)
+    89     40000     107690.0      2.7      2.3          def execute_policy(f: PolicyFunction) -> dict:
+    90                                                       return policy_scope_tuner(args, additional_objs, f)
+    91                                           
+    92     40000      97716.0      2.4      2.1          col_results = map(execute_policy, funcs)
+    93                                           
+    94                                           
+    95                                                   # Create a nested dict containing all results combinations
+    96                                                   # Where 'k' is a policy input label,
+    97                                                   # and 'd' is a ordinal for aggregation
+    98     40000      72639.0      1.8      1.6          new_dict: dict = {}
+    99    200000    1452248.0      7.3     31.4          for i, col_result in enumerate(col_results):
+   100    320000     714887.0      2.2     15.4              for label, value in col_result.items():
+   101    160000     362377.0      2.3      7.8                  if label not in new_dict.keys():
+   102     40000      86812.0      2.2      1.9                      new_dict[label] = {}
+   103                                                           else:
+   104                                                               pass
+   105    160000     330124.0      2.1      7.1                  new_dict[label][i] = value
+   106                                           
+   107                                                   # Aggregator functions
+   108     40000     114707.0      2.9      2.5          ops_head, *ops_tail = ops
+   109                                           
+   110                                                   # Function for aggregating a combination of policy inputs
+   111                                                   # for the same signal
+   112     40000      88720.0      2.2      1.9          def f(val_list):
+   113                                                       return compose(init_reduction_funct=ops_head,
+   114                                                                      funct_list=ops_tail,
+   115                                                                      val_list=val_list)
+   116                                           
+   117                                                   # Generate dict to be consumed by SUFs
+   118     80000     856235.0     10.7     18.5          policy_input = {
+   119                                                       label: f(val_list)
+   120                                                       for label, val_list
+   121     40000      83854.0      2.1      1.8              in new_dict.items()}
+   122                                           
+   123     40000      79717.0      2.0      1.7          return policy_input
+
+
+                  ___________    ____
+  ________ __ ___/ / ____/   |  / __ \
+ / ___/ __` / __  / /   / /| | / / / /
+/ /__/ /_/ / /_/ / /___/ ___ |/ /_/ /
+\___/\__,_/\__,_/\____/_/  |_/_____/
+by cadCAD
+
+Execution Mode: local_proc
+Configuration Count: 1
+Dimensions of the first simulation: (Timesteps, Params, Runs, Vars) = (20000, 8, 1, 6)
+Execution Method: local_simulations
+SimIDs   : [0]
+SubsetIDs: [0]
+Ns       : [0]
+ExpIDs   : [0]
+Execution Mode: single_threaded
+Total execution time: 20.78s
+Wrote profile results to model_profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 19.9277 s
+File: /home/danlessa/repos/danlessa/cadCAD-tweaked/cadCAD/engine/simulation.py
+Function: state_update_pipeline at line 207
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   207                                               @profile
+   208                                               def state_update_pipeline(
+   209                                                   self,
+   210                                                   sweep_dict: Dict[str, List[Any]],
+   211                                                   simulation_list,
+   212                                                   configs: List[Tuple[List[Callable], List[Callable]]],
+   213                                                   env_processes: Dict[str, Callable],
+   214                                                   time_step: int,
+   215                                                   run: int,
+   216                                                   additional_objs
+   217                                               ) -> List[Dict[str, Any]]:
+   218                                           
+   219     20000      22009.0      1.1      0.1          sub_step = 0
+   220     20000      31797.0      1.6      0.2          states_list_copy: List[Dict[str, Any]] = tuple(simulation_list[-1])
+   221     20000      35614.0      1.8      0.2          genesis_states: Dict[str, Any] = states_list_copy[-1].copy()
+   222                                           #         genesis_states: Dict[str, Any] = states_list_copy[-1]
+   223                                           
+   224     20000      30204.0      1.5      0.2          if len(states_list_copy) == 1:
+   225         1          2.0      2.0      0.0              genesis_states['substep'] = sub_step
+   226                                           
+   227     20000      17777.0      0.9      0.1          del states_list_copy
+   228     20000      22627.0      1.1      0.1          states_list: List[Dict[str, Any]] = [genesis_states]
+   229                                           
+   230     20000      19186.0      1.0      0.1          sub_step += 1
+   231    100000     112274.0      1.1      0.6          for [s_conf, p_conf] in configs:
+   232    160000   19287483.0    120.5     96.8              states_list: List[Dict[str, Any]] = self.partial_state_update(
+   233     80000      77549.0      1.0      0.4                  sweep_dict, sub_step, states_list, simulation_list, s_conf, p_conf, env_processes, time_step, run,
+   234     80000      63853.0      0.8      0.3                  additional_objs
+   235                                                       )
+   236     80000     169993.0      2.1      0.9              sub_step += 1
+   237                                           
+   238     20000      21024.0      1.1      0.1          time_step += 1
+   239                                           
+   240     20000      16284.0      0.8      0.1          return states_list
+
+
+                  ___________    ____
+  ________ __ ___/ / ____/   |  / __ \
+ / ___/ __` / __  / /   / /| | / / / /
+/ /__/ /_/ / /_/ / /___/ ___ |/ /_/ /
+\___/\__,_/\__,_/\____/_/  |_/_____/
+by cadCAD
+
+Execution Mode: local_proc
+Configuration Count: 1
+Dimensions of the first simulation: (Timesteps, Params, Runs, Vars) = (20000, 8, 1, 6)
+Execution Method: local_simulations
+SimIDs   : [0]
+SubsetIDs: [0]
+Ns       : [0]
+ExpIDs   : [0]
+Execution Mode: single_threaded
+Total execution time: 26.88s
+Wrote profile results to model_profile.py.lprof
+Timer unit: 1e-06 s
+
+Total time: 22.5848 s
+File: /home/danlessa/repos/danlessa/cadCAD-tweaked/cadCAD/engine/simulation.py
+Function: partial_state_update at line 157
+
+Line #      Hits         Time  Per Hit   % Time  Line Contents
+==============================================================
+   157                                               @profile
+   158                                               def partial_state_update(
+   159                                                   self,
+   160                                                   sweep_dict: Dict[str, List[Any]],
+   161                                                   sub_step: int,
+   162                                                   sL,
+   163                                                   sH,
+   164                                                   state_funcs: List[Callable],
+   165                                                   policy_funcs: List[Callable],
+   166                                                   env_processes: Dict[str, Callable],
+   167                                                   time_step: int,
+   168                                                   run: int,
+   169                                                   additional_objs
+   170                                               ) -> List[Dict[str, Any]]:
+   171                                           
+   172                                                   # last_in_obj: Dict[str, Any] = MappingProxyType(sL[-1])
+   173     80000     256471.0      3.2      1.1          last_in_obj: Dict[str, Any] = sL[-1].copy()
+   174    160000     557159.0      3.5      2.5          _input: Dict[str, Any] = self.policy_update_exception(
+   175    160000    6882715.0     43.0     30.5              self.get_policy_input(sweep_dict, sub_step, sH,
+   176     80000     148081.0      1.9      0.7                                    last_in_obj, policy_funcs, additional_objs)
+   177                                                   )
+   178                                           
+   179     80000     200710.0      2.5      0.9          def generate_record(state_funcs):
+   180                                                       def state_scope_tuner(f):
+   181                                                           lenf = f.__code__.co_argcount
+   182                                                           if lenf == 5:
+   183                                                               return self.state_update_exception(f(sweep_dict, sub_step, sH, last_in_obj, _input))
+   184                                                           elif lenf == 6:
+   185                                                               return self.state_update_exception(f(sweep_dict, sub_step, sH, last_in_obj, _input, additional_objs))
+   186                                                       for f in state_funcs:
+   187                                                           yield state_scope_tuner(f)
+   188                                           
+   189     80000     161824.0      2.0      0.7          def transfer_missing_fields(source, destination):
+   190                                                       for k in source:
+   191                                                           if k not in destination:
+   192                                                               destination[k] = source[k]
+   193                                                       del source
+   194                                                       return destination
+   195                                           
+   196    160000    1347817.0      8.4      6.0          last_in_copy: Dict[str, Any] = transfer_missing_fields(
+   197     80000    9876382.0    123.5     43.7              last_in_obj, dict(generate_record(state_funcs)))
+   198    160000    2247331.0     14.0     10.0          last_in_copy: Dict[str, Any] = self.apply_env_proc(
+   199     80000     157055.0      2.0      0.7              sweep_dict, env_processes, last_in_copy)
+   200     80000     227208.0      2.8      1.0          last_in_copy['substep'], last_in_copy['timestep'], last_in_copy['run'] = sub_step, time_step, run
+   201                                           
+   202     80000     221534.0      2.8      1.0          sL.append(last_in_copy)
+   203     80000     156800.0      2.0      0.7          del last_in_copy
+   204                                           
+   205     80000     143689.0      1.8      0.6          return sL
+
