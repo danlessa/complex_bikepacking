@@ -1,3 +1,5 @@
 *.grib
 .ipynb_checkpoints
 .vscode
+*.hdf
+*.cpython*
